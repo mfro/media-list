@@ -1,15 +1,11 @@
 <template>
   <v-app class="app">
-    <v-card class="ma-3" style="overflow: hidden">
-      <template v-slot:title>
-        <v-text title>Media</v-text>
-      </template>
-
+    <v-card class="ma-1" style="overflow: hidden">
       <media-search @input="onInput" />
     </v-card>
 
-    <v-flex class="px-3">
-      <media-item v-for="item in list" :key="item" :value="item" />
+    <v-flex align-start class="pr-1" style="flex-wrap:wrap">
+      <media-item v-for="item in list" :key="item" :value="item" class="ml-1 mb-1" />
     </v-flex>
   </v-app>
 </template>

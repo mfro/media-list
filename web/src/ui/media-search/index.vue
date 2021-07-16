@@ -1,13 +1,12 @@
 <template>
-  <v-text-field v-model="query" />
+  <v-text-field placeholder="search" v-model="query" class="mt-0" />
 
-  <v-flex align-start class="py-2 pr-2" style="overflow-x: scroll">
+  <v-flex align-start style="overflow-x: scroll">
     <search-result
       v-for="result in results"
       :key="result"
       :value="result"
-      class="ml-2"
-      @click="$emit('input', result)"
+      @click="onInput(result)"
     />
   </v-flex>
 </template>
@@ -26,7 +25,7 @@ export default {
 
   emits: ['input'],
 
-  setup(props) {
+  setup(props, { emit }) {
     const query = shallowRef('');
     const results = shallowRef([]);
 
@@ -39,6 +38,11 @@ export default {
 
     return {
       query, results,
+
+      onInput(result) {
+        query.value = '';
+        emit('input', result);
+      },
     };
   },
 };
