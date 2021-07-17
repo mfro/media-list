@@ -1,4 +1,4 @@
-import fsModule, { promises as fs } from 'fs';
+import fsModule, { promises as fs, stat } from 'fs';
 import path from 'path';
 import { IncomingMessage } from 'http';
 
@@ -23,7 +23,6 @@ interface Update {
 
 async function handleConnection(socket: WebSocket, request: IncomingMessage) {
   assert(request.url != null, 'url');
-  console.log(request.url);
 
   assert(request.url[0] == '/', 'url');
   const code = request.url.slice(1);
@@ -43,24 +42,31 @@ async function handleConnection(socket: WebSocket, request: IncomingMessage) {
   }
 
   state.sockets.add(socket);
-  socket.send(JSON.stringify(state.doc));
+  socket.send(JSON.stringify({
+    base: latestHash,
+    patch: jsonpatch.compare({}, state.doc),
+  }));
 
   socket.on('message', async data => {
     assert(state != null, 'state');
     assert(typeof data == 'string', 'data');
 
     const update: Update = JSON.parse(data);
-    if (update.base != latestHash) return;
+    if (update.base != latestHash) return socket.close();
 
     await applyUpdate(code, state.doc, update);
 
     for (const other of state.sockets) {
-      if (other == socket) continue;
-
-      other.send(JSON.stringify({
-        base: latestHash,
-        update: update,
-      }));
+      if (other == socket) {
+        other.send(JSON.stringify({
+          base: latestHash,
+        }));
+      } else {
+        other.send(JSON.stringify({
+          base: latestHash,
+          patch: update.patch,
+        }));
+      }
     }
   });
 
@@ -132,10 +138,10 @@ async function applyUpdate(fileName: string, value: object, update: Update) {
 
   const status = await git.status({
     fs: fsModule, dir: dataDir,
-    filepath: 'test',
+    filepath: fileName,
   });
 
-  latestHash = status == 'modified'
-    ? await makeCommit(fileName)
-    : await loadLatestHash();
+  latestHash = status == 'unmodified'
+    ? await loadLatestHash()
+    : await makeCommit(fileName);
 }

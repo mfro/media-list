@@ -1,0 +1,16 @@
+simpledata server
+  options:
+    git
+    allow creation
+
+  listen for mutations, pass them on to other clients.
+  ensure ordering
+  create commit if git is enabled
+
+simpledata client
+  options:
+    remote/url
+
+  vuex
+  send mutations to server, apply them locally
+  follow ordering from server

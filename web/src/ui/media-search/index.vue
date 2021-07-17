@@ -32,7 +32,7 @@ export default {
     watch(query, async value => {
       const rsp = await suggestions(value);
       if (value != query.value) return;
-      console.log(`${value}:`, rsp);
+
       results.value = rsp.filter(v => v.q == 'feature');
     });
 

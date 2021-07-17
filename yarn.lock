@@ -944,6 +944,10 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
+"@mfro/simpledata@mfro/simpledata":
+  version "1.0.0"
+  resolved "https://codeload.github.com/mfro/simpledata/tar.gz/0e3188b5521b875823814b26c4ba12873e669777"
+
 "@mfro/ts-common@mfro/ts-common":
   version "1.0.0"
   resolved "https://codeload.github.com/mfro/ts-common/tar.gz/ce9a9e4ed14ba714bd501209c3ff01cc8f5ed700"

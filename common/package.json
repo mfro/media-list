@@ -1,0 +1,12 @@
+{
+  "name": "common",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/lib.ts",
+  "dependencies": {
+    "@mfro/simpledata": "mfro/simpledata"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  }
+}

@@ -1,5 +1,9 @@
 <template>
-  <v-button class="button px-0" @click="$emit('click', value)">
+  <v-button
+    class="button px-0"
+    @click="$emit('click', value)"
+    @contextmenu.prevent="$emit('delete', value)"
+  >
     <v-flex class="result">
       <img :src="imageUrl" v-if="value.i" />
       <v-flex align-center justify-center class="image-placeholder" v-else>
@@ -29,7 +33,7 @@ export default {
     value: Object,
   },
 
-  emits: ['click'],
+  emits: ['click', 'delete'],
 
   setup(props) {
     const imageUrl = computed(() => {

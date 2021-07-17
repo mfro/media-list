@@ -7,7 +7,10 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@mfro/simpledata": "mfro/simpledata",
+    "@mfro/ts-common": "mfro/ts-common",
     "@mfro/vue-ui": "mfro/vue-ui",
+    "common": "0.0.0",
     "core-js": "^3.6.5",
     "fast-json-patch": "^3.0.0-1",
     "vue": "^3.0.0"

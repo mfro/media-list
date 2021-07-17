@@ -1,9 +1,17 @@
 import { createApp } from 'vue'
 import { framework } from '@mfro/vue-ui';
+import { assert } from '@mfro/ts-common/assert';
+
 import App from './main.vue'
+import { initData } from './modules/data';
+
+const currentUrl = new URL(location.href);
+const remote = currentUrl.searchParams.get('remote');
+assert(remote != null, 'remote');
+
+const context = initData(remote);
 
 const app = createApp(App);
 app.use(framework);
+app.provide('context', context);
 app.mount('#app')
-
-const ws = new WebSocket('ws://box:8081/95afb6a66c836cff90608b3917252fd20add4a8e815a13a8e688d4b07616f01a');
