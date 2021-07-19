@@ -15,29 +15,42 @@
         :key="item"
         :value="item"
         class="ml-1 mb-1"
-        @delete="onDelete"
+        @click="open(item)"
       />
     </v-flex>
+
+    <v-dialog :modelValue="opened != null" @update:modelValue="opened = null">
+      <v-card style="width: 90vw; max-width: 800px; overflow: hidden">
+        <media-details
+          :value="opened"
+          @delete="onDelete(opened), (opened = null)"
+        />
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
 <script >
-import { inject } from 'vue';
+import { inject, shallowRef } from 'vue';
 
 import MediaSearch from './ui/media-search';
 import MediaItem from './ui/media-item';
+import MediaDetails from './ui/media-details';
 
 export default {
   name: 'media-list',
   components: {
     MediaSearch,
     MediaItem,
+    MediaDetails,
   },
 
   setup(props) {
     const context = inject('context');
+    const opened = shallowRef(null);
 
     return {
+      opened,
       context,
 
       onInput(v) {
@@ -47,6 +60,10 @@ export default {
       onDelete(v) {
         const index = context.data.state.movies.indexOf(v);
         context.data.mutate('DEL_MOVIE', index);
+      },
+
+      open(movie) {
+        opened.value = movie;
       },
     };
   },

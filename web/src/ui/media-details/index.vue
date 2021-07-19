@@ -1,31 +1,38 @@
 <template>
-  <v-button
-    class="button px-0"
-    @click="$emit('click', value)"
-  >
-    <v-flex class="result">
-      <img :src="imageUrl" :style="imageStyle" v-if="value.i" />
-      <v-flex
-        :style="imageStyle"
-        align-center
-        justify-center
-        class="image-placeholder"
-        v-else
-      >
-        <v-icon x-large>theaters</v-icon>
+  <v-flex class="result">
+    <img :src="imageUrl" :style="imageStyle" v-if="value.i" />
+    <v-flex
+      :style="imageStyle"
+      align-center
+      justify-center
+      class="image-placeholder"
+      v-else
+    >
+      <v-icon x-large>theaters</v-icon>
+    </v-flex>
+
+    <v-flex grow column class="px-3 py-1 details">
+      <v-flex>
+        <v-text title>{{ value.l }}</v-text>
+        <v-flex grow />
       </v-flex>
 
-      <!-- <v-flex column align-start class="px-3 py-1 details">
-        <v-text title>{{ value.l }}</v-text>
-        <span class="my-1" />
-        <v-text subtitle>{{ value.y }}</v-text>
-        <span class="my-3" />
-        <v-text subtitle>{{ value.s }}</v-text>
+      <span class="my-1" />
+      <v-text subtitle>{{ value.y }}</v-text>
+      <span class="my-3" />
 
-        <v-flex grow />
-      </v-flex> -->
+      <v-flex grow column align-end justify-end>
+        <v-button small color="error" @click="remove">remove</v-button>
+        <span class="my-1" />
+        <v-flex>
+          <v-button small color="default" @click="openImdb">imdb</v-button>
+          <span class="mx-1" />
+          <v-button small color="default" @click="openGoogle">google</v-button>
+        </v-flex>
+        <span class="my-1" />
+      </v-flex>
     </v-flex>
-  </v-button>
+  </v-flex>
 </template>
 
 <script >
@@ -35,15 +42,15 @@ const screenWidth = shallowRef(window.innerWidth);
 window.addEventListener('resize', () => screenWidth.value = window.innerWidth);
 
 export default {
-  name: 'media-item',
+  name: 'media-details',
 
   props: {
     value: Object,
   },
 
-  emits: ['click'],
+  emits: ['delete'],
 
-  setup(props) {
+  setup(props, { emit }) {
     const width = computed(() => {
       const maxWidth = 180;
 
@@ -71,19 +78,26 @@ export default {
     return {
       imageUrl,
       imageStyle,
+
+      remove() {
+        emit('delete', props.value);
+      },
+
+      openImdb() {
+        const url = `https://www.imdb.com/title/${props.value.id}/`;
+        window.open(url, '_blank').focus();
+      },
+
+      openGoogle() {
+        const url = `https://www.google.com/search?q=${props.value.l}+(${props.value.y})`;
+        window.open(url, '_blank').focus();
+      },
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.button {
-  height: auto !important;
-  flex: 0 0 auto;
-  overflow: hidden;
-  cursor: pointer;
-}
-
 .result {
   font-weight: 400;
   text-transform: none;

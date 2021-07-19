@@ -1,5 +1,15 @@
 <template>
-  <v-text-field placeholder="search" v-model="query" class="mt-0" />
+  <v-flex class="bar-container">
+    <v-text-field
+      placeholder="search"
+      v-model="query"
+      class="mt-0"
+      style="flex: 1 1"
+    />
+    <v-button icon class="close-button" @click="query = ''">
+      <v-icon>close</v-icon>
+    </v-button>
+  </v-flex>
 
   <v-flex align-start style="overflow-x: scroll">
     <search-result
@@ -47,3 +57,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.bar-container {
+  position: relative;
+}
+
+.close-button {
+  position: absolute !important;
+  top: 1px;
+  right: 1px;
+}
+</style>
