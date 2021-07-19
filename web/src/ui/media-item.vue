@@ -1,8 +1,5 @@
 <template>
-  <v-button
-    class="button px-0"
-    @click="$emit('click', value)"
-  >
+  <v-button class="button px-0" @click="$emit('click', value)">
     <v-flex class="result">
       <img :src="imageUrl" :style="imageStyle" v-if="value.i" />
       <v-flex
@@ -58,7 +55,7 @@ export default {
 
     const imageUrl = computed(() => {
       return props.value.i[0]
-        .replace('._V1_.jpg', `._V1._SX${width.value * 2}_CR0,0,${width.value * 2},${height.value * 2}_.jpg`);
+        .replace('._V1_.jpg', `._V1._SX${width.value * devicePixelRatio}_CR0,0,${width.value * devicePixelRatio},${height.value * devicePixelRatio}_.jpg`);
     });
 
     const imageStyle = computed(() => {
