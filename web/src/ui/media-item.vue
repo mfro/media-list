@@ -58,7 +58,7 @@ export default {
 
     const imageUrl = computed(() => {
       return props.value.i[0]
-        .replace('._V1_.jpg', `._V1._SX${width.value}_CR0,0,${width.value},${height.value}_.jpg`);
+        .replace('._V1_.jpg', `._V1._SX${width.value * 2}_CR0,0,${width.value * 2},${height.value * 2}_.jpg`);
     });
 
     const imageStyle = computed(() => {
