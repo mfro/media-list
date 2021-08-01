@@ -1,16 +1,7 @@
 <template>
   <v-button tile class="button px-0" @click="$emit('click', value)">
     <v-flex class="result">
-      <img :src="imageUrl" :style="imageStyle" v-if="value.i" />
-      <v-flex
-        :style="imageStyle"
-        align-center
-        justify-center
-        class="image-placeholder"
-        v-else
-      >
-        <v-icon x-large>theaters</v-icon>
-      </v-flex>
+      <media-poster :value="value" :width="width" />
 
       <!-- <v-flex column align-start class="px-3 py-1 details">
         <v-text title>{{ value.l }}</v-text>
@@ -26,13 +17,18 @@
 </template>
 
 <script >
-import { computed, shallowRef, watch } from 'vue';
+import { computed, shallowRef } from 'vue';
+
+import MediaPoster from './media-poster';
 
 const screenWidth = shallowRef(window.innerWidth);
 window.addEventListener('resize', () => screenWidth.value = window.innerWidth);
 
 export default {
   name: 'media-item',
+  components: {
+    MediaPoster,
+  },
 
   props: {
     value: Object,
@@ -49,25 +45,8 @@ export default {
       return min;
     });
 
-    const height = computed(() => {
-      return 1.453125 * width.value;
-    });
-
-    const imageUrl = computed(() => {
-      return props.value.i[0]
-        .replace('._V1_.jpg', `._V1._SX${width.value * devicePixelRatio}_CR0,0,${width.value * devicePixelRatio},${height.value * devicePixelRatio}_.jpg`);
-    });
-
-    const imageStyle = computed(() => {
-      return {
-        width: `${width.value}px`,
-        height: `${height.value}px`,
-      };
-    });
-
     return {
-      imageUrl,
-      imageStyle,
+      width
     };
   },
 };

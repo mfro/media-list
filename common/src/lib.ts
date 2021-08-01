@@ -1,8 +1,13 @@
-import { DataInstanceFrom, defineModel } from '@mfro/simpledata/common';
+import { buildModel, DataInstanceFrom, defineModel, defineMutations } from '@mfro/simpledata/common';
+
+interface SaveData {
+  movies: Movie[];
+  watched: { [user: string]: number[] };
+}
 
 export interface Data {
   movies: Movie[];
-  watched: Movie[];
+  watched: Map<string, Set<Movie>>;
 }
 
 export interface Movie {
@@ -19,24 +24,52 @@ export interface Movie {
   y: number;
 }
 
-export type DataInstance = DataInstanceFrom<typeof model>;
-export const model = defineModel({
-  init: (): Data => ({
+const base = defineModel<Data, SaveData>({
+  init: () => ({
     movies: [],
-    watched: [],
+    watched: new Map(),
   }),
 
-  save: data => data as any,
-  load: json => json as any,
+  save: data => {
+    const movies = [...data.movies];
 
-  mutations: {
-    ADD_MOVIE(data, movie: Movie) {
-      data.movies.push(movie);
-    },
+    const watched = {} as { [user: string]: number[] };
+    for (const [user, set] of data.watched)
+      watched[user] = [...set].map(m => movies.indexOf(m));
 
-    WATCH_MOVIE(data, index: number) {
-      const movie = data.movies.splice(index, 1)[0];
-      data.watched.push(movie);
-    },
+    return { movies, watched } as any;
+  },
+  load: raw => {
+    const movies = [...raw.movies];
+
+    const watched = new Map();
+    for (const user in raw.watched) {
+      const set = new Set(raw.watched[user]);
+      watched.set(user, set);
+    }
+
+    return { movies, watched };
   },
 });
+
+const mutations = defineMutations(base, {
+  ADD_MOVIE(data, movie: Movie) {
+    data.movies.push(movie);
+  },
+
+  DEL_MOVIE(data, index: number) {
+    data.movies.splice(index, 1);
+  },
+
+  WATCH_MOVIE(data, user: string, index: number) {
+    const movie = data.movies.splice(index, 1)[0];
+
+    let set = data.watched.get(user);
+    if (!set) data.watched.set(user, set = new Set);
+
+    set.add(movie);
+  },
+});
+
+export const model = buildModel(base, mutations);
+export type DataInstance = DataInstanceFrom<typeof model>;

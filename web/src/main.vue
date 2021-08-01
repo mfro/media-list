@@ -1,23 +1,27 @@
 <template>
   <v-app class="app">
-    <v-card class="ma-1" style="overflow: hidden">
-      <media-search @input="onInput" />
-    </v-card>
+    <user-login v-if="!context.user" />
 
-    <v-flex
-      align-start
-      class="pr-1"
-      style="flex-wrap: wrap"
-      v-if="context.data"
-    >
-      <media-item
-        v-for="item in context.data.state.movies"
-        :key="item"
-        :value="item"
-        class="ml-1 mb-1"
-        @click="open(item)"
-      />
-    </v-flex>
+    <template v-else>
+      <v-card class="ma-1" style="overflow: hidden">
+        <media-search @input="onInput" />
+      </v-card>
+
+      <v-flex
+        align-start
+        class="pr-1"
+        style="flex-wrap: wrap"
+        v-if="context.data"
+      >
+        <media-item
+          v-for="item in context.data.state.movies"
+          :key="item"
+          :value="item"
+          class="ml-1 mb-1"
+          @click="open(item)"
+        />
+      </v-flex>
+    </template>
 
     <v-dialog :modelValue="opened != null" @update:modelValue="opened = null">
       <v-card style="overflow: hidden">
@@ -25,6 +29,7 @@
           :value="opened"
           @close="opened = null"
           @watch="onWatch(opened), (opened = null)"
+          @remove="onRemove(opened), (opened = null)"
         />
       </v-card>
     </v-dialog>
@@ -37,6 +42,7 @@ import { inject, shallowRef } from 'vue';
 import MediaSearch from './ui/media-search';
 import MediaItem from './ui/media-item';
 import MediaDetails from './ui/media-details';
+import UserLogin from './ui/user-login';
 
 export default {
   name: 'media-list',
@@ -44,6 +50,7 @@ export default {
     MediaSearch,
     MediaItem,
     MediaDetails,
+    UserLogin,
   },
 
   setup(props) {
@@ -59,8 +66,13 @@ export default {
       },
 
       onWatch(v) {
+        // const index = context.data.state.movies.indexOf(v);
+        // context.data.mutate('WATCH_MOVIE', index);
+      },
+
+      onRemove(v) {
         const index = context.data.state.movies.indexOf(v);
-        context.data.mutate('WATCH_MOVIE', index);
+        context.data.mutate('DEL_MOVIE', index);
       },
 
       open(movie) {
@@ -80,7 +92,8 @@ export default {
 </style>
 
 <style lang="scss">
-body, .app {
+body,
+.app {
   background-color: #e0e0e0;
 }
 </style>

@@ -1,12 +1,6 @@
 <template>
   <v-flex column class="result" :style="resultStyle">
-    <img
-      class="image"
-      :src="imageUrl"
-      :style="imageStyle"
-      v-if="value.i"
-      @click="$emit('close')"
-    />
+    <media-poster :value="value" :width="width" @click="$emit('close')" />
 
     <v-flex column class="px-2 py-2 details" style="flex: 0 0 auto">
       <v-text title>{{ value.l }}</v-text>
@@ -18,7 +12,11 @@
 
         <v-grow />
 
-        <v-button x-small color="error" @click="remove">watched</v-button>
+        <v-button x-small color="error" @click="remove">remove</v-button>
+
+        <span class="mx-1" />
+
+        <v-button x-small color="error" @click="watched">watched</v-button>
       </v-flex>
 
       <span class="my-1" />
@@ -35,7 +33,9 @@
 </template>
 
 <script >
-import { computed, shallowRef, watch } from 'vue';
+import { computed, shallowRef } from 'vue';
+
+import MediaPoster from '../media-poster';
 
 const screenWidth = shallowRef(window.innerWidth);
 const screenHeight = shallowRef(window.innerHeight);
@@ -43,34 +43,21 @@ window.addEventListener('resize', () => (screenWidth.value = window.innerWidth, 
 
 export default {
   name: 'media-details',
+  components: {
+    MediaPoster,
+  },
 
   props: {
     value: Object,
   },
 
-  emits: ['close', 'watch'],
+  emits: ['close', 'remove', 'watch'],
 
   setup(props, { emit }) {
     const width = computed(() => {
       const a = screenWidth.value * 0.7;
       const b = screenHeight.value * 0.66 / 1.453125;
       return Math.min(a, b);
-    });
-
-    const height = computed(() => {
-      return 1.453125 * width.value;
-    });
-
-    const imageUrl = computed(() => {
-      return props.value.i[0]
-        .replace('._V1_.jpg', `._V1._SX${width.value * devicePixelRatio}_CR0,0,${width.value * devicePixelRatio},${height.value * devicePixelRatio}_.jpg`);
-    });
-
-    const imageStyle = computed(() => {
-      return {
-        width: `${width.value}px`,
-        height: `${height.value}px`,
-      };
     });
 
     const resultStyle = computed(() => {
@@ -80,11 +67,14 @@ export default {
     });
 
     return {
-      imageUrl,
-      imageStyle,
+      width,
       resultStyle,
 
       remove() {
+        emit('remove', props.value);
+      },
+
+      watched() {
         emit('watch', props.value);
       },
 
