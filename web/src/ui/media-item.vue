@@ -1,5 +1,5 @@
 <template>
-  <v-button class="button px-0" @click="$emit('click', value)">
+  <v-button tile class="button px-0" @click="$emit('click', value)">
     <v-flex class="result">
       <img :src="imageUrl" :style="imageStyle" v-if="value.i" />
       <v-flex

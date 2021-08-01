@@ -24,7 +24,7 @@
         <media-details
           :value="opened"
           @close="opened = null"
-          @delete="onDelete(opened), (opened = null)"
+          @watch="onWatch(opened), (opened = null)"
         />
       </v-card>
     </v-dialog>
@@ -58,9 +58,9 @@ export default {
         context.data.mutate('ADD_MOVIE', v);
       },
 
-      onDelete(v) {
+      onWatch(v) {
         const index = context.data.state.movies.indexOf(v);
-        context.data.mutate('DEL_MOVIE', index);
+        context.data.mutate('WATCH_MOVIE', index);
       },
 
       open(movie) {
@@ -80,7 +80,7 @@ export default {
 </style>
 
 <style lang="scss">
-body {
+body, .app {
   background-color: #e0e0e0;
 }
 </style>

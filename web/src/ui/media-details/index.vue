@@ -18,7 +18,7 @@
 
         <v-grow />
 
-        <v-button x-small color="error" @click="remove">remove</v-button>
+        <v-button x-small color="error" @click="remove">watched</v-button>
       </v-flex>
 
       <span class="my-1" />
@@ -48,7 +48,7 @@ export default {
     value: Object,
   },
 
-  emits: ['close', 'delete'],
+  emits: ['close', 'watch'],
 
   setup(props, { emit }) {
     const width = computed(() => {
@@ -85,7 +85,7 @@ export default {
       resultStyle,
 
       remove() {
-        emit('delete', props.value);
+        emit('watch', props.value);
       },
 
       openDl() {

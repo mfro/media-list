@@ -2,6 +2,7 @@ import { DataInstanceFrom, defineModel } from '@mfro/simpledata/common';
 
 export interface Data {
   movies: Movie[];
+  watched: Movie[];
 }
 
 export interface Movie {
@@ -22,6 +23,7 @@ export type DataInstance = DataInstanceFrom<typeof model>;
 export const model = defineModel({
   init: (): Data => ({
     movies: [],
+    watched: [],
   }),
 
   save: data => data as any,
@@ -32,8 +34,9 @@ export const model = defineModel({
       data.movies.push(movie);
     },
 
-    DEL_MOVIE(data, index: number) {
-      data.movies.splice(index, 1);
+    WATCH_MOVIE(data, index: number) {
+      const movie = data.movies.splice(index, 1)[0];
+      data.watched.push(movie);
     },
   },
 });
