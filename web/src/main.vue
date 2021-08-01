@@ -20,9 +20,10 @@
     </v-flex>
 
     <v-dialog :modelValue="opened != null" @update:modelValue="opened = null">
-      <v-card style="width: 90vw; max-width: 800px; overflow: hidden">
+      <v-card style="overflow: hidden">
         <media-details
           :value="opened"
+          @close="opened = null"
           @delete="onDelete(opened), (opened = null)"
         />
       </v-card>
@@ -72,7 +73,14 @@ export default {
 
 <style lang="scss" scoped>
 .app {
-  width: 100vw;
+  width: 100vw !important;
   min-height: 100vh;
+  overflow: hidden;
+}
+</style>
+
+<style lang="scss">
+body {
+  background-color: #e0e0e0;
 }
 </style>

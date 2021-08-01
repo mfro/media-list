@@ -1,35 +1,34 @@
 <template>
-  <v-flex class="result">
-    <img :src="imageUrl" :style="imageStyle" v-if="value.i" />
-    <v-flex
+  <v-flex column class="result" :style="resultStyle">
+    <img
+      class="image"
+      :src="imageUrl"
       :style="imageStyle"
-      align-center
-      justify-center
-      class="image-placeholder"
-      v-else
-    >
-      <v-icon x-large>theaters</v-icon>
-    </v-flex>
+      v-if="value.i"
+      @click="$emit('close')"
+    />
 
-    <v-flex grow column class="px-3 py-1 details">
-      <v-flex>
-        <v-text title>{{ value.l }}</v-text>
-        <v-flex grow />
+    <v-flex column class="px-2 py-2 details" style="flex: 0 0 auto">
+      <v-text title>{{ value.l }}</v-text>
+
+      <span class="my-1" />
+
+      <v-flex align-start>
+        <v-text subtitle>{{ value.y }}</v-text>
+
+        <v-grow />
+
+        <v-button x-small color="error" @click="remove">remove</v-button>
       </v-flex>
 
       <span class="my-1" />
-      <v-text subtitle>{{ value.y }}</v-text>
-      <span class="my-3" />
 
-      <v-flex grow column align-end justify-end>
-        <v-button small color="error" @click="remove">remove</v-button>
-        <span class="my-1" />
-        <v-flex>
-          <v-button small color="default" @click="openImdb">imdb</v-button>
-          <span class="mx-1" />
-          <v-button small color="default" @click="openGoogle">google</v-button>
-        </v-flex>
-        <span class="my-1" />
+      <v-flex justify-end style="flex: 0 0 auto">
+        <v-button x-small color="default" @click="openDl">dl</v-button>
+        <span class="mx-1" />
+        <v-button x-small color="default" @click="openImdb">imdb</v-button>
+        <span class="mx-1" />
+        <v-button x-small color="default" @click="openGoogle">google</v-button>
       </v-flex>
     </v-flex>
   </v-flex>
@@ -39,7 +38,8 @@
 import { computed, shallowRef, watch } from 'vue';
 
 const screenWidth = shallowRef(window.innerWidth);
-window.addEventListener('resize', () => screenWidth.value = window.innerWidth);
+const screenHeight = shallowRef(window.innerHeight);
+window.addEventListener('resize', () => (screenWidth.value = window.innerWidth, screenHeight.value = window.innerHeight));
 
 export default {
   name: 'media-details',
@@ -48,15 +48,13 @@ export default {
     value: Object,
   },
 
-  emits: ['delete'],
+  emits: ['close', 'delete'],
 
   setup(props, { emit }) {
     const width = computed(() => {
-      const maxWidth = 180;
-
-      const count = Math.ceil((screenWidth.value - 4) / maxWidth);
-      const min = Math.floor((screenWidth.value - 4) / count) - 4;
-      return min;
+      const a = screenWidth.value * 0.7;
+      const b = screenHeight.value * 0.66 / 1.453125;
+      return Math.min(a, b);
     });
 
     const height = computed(() => {
@@ -65,7 +63,7 @@ export default {
 
     const imageUrl = computed(() => {
       return props.value.i[0]
-        .replace('._V1_.jpg', `._V1._SX${width.value}_CR0,0,${width.value},${height.value}_.jpg`);
+        .replace('._V1_.jpg', `._V1._SX${width.value * devicePixelRatio}_CR0,0,${width.value * devicePixelRatio},${height.value * devicePixelRatio}_.jpg`);
     });
 
     const imageStyle = computed(() => {
@@ -75,12 +73,24 @@ export default {
       };
     });
 
+    const resultStyle = computed(() => {
+      return {
+        width: `${width.value}px`,
+      };
+    });
+
     return {
       imageUrl,
       imageStyle,
+      resultStyle,
 
       remove() {
         emit('delete', props.value);
+      },
+
+      openDl() {
+        const url = `https://rargb.to/search/?order=seeders&by=DESC&search=${props.value.l}+${props.value.y}`;
+        window.open(url, '_blank').focus();
       },
 
       openImdb() {
@@ -102,19 +112,23 @@ export default {
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
+  position: relative;
 }
 
-img {
+.image {
   object-fit: cover;
-  flex: 0 0 auto;
+  // position: absolute;
 }
 
-.image-placeholder {
-  flex: 0 0 auto;
-}
+// .overlay {
+//   position: absolute;
+//   top: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-image: linear-gradient(transparent 65%, black);
+// }
 
 .details {
-  max-width: 16em;
   white-space: normal;
   text-align: left;
 }

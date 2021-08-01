@@ -1,7 +1,7 @@
 <template>
   <v-flex class="bar-container">
     <v-text-field
-      placeholder="search"
+      placeholder="add movies"
       v-model="query"
       class="mt-0"
       style="flex: 1 1"
